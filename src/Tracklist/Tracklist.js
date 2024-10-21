@@ -1,7 +1,7 @@
 import './Tracklist.module.css';
 import Track from '../Track/Track'
 
-const Tracklist = ( {searchTerm, trackList, onAddTrack}) => {
+const Tracklist = ( {searchTerm, tracklist, onAddTrack}) => {
 
   if (searchTerm === '') {
     return (
@@ -12,7 +12,7 @@ const Tracklist = ( {searchTerm, trackList, onAddTrack}) => {
       <div className="list">
         <h2>Search Term: {searchTerm}</h2>
         <div classNme="list-tracks">
-          {trackList.map((track) => (
+          {tracklist.map((track) => (
               <Track 
                 trackUri={track.uri} 
                 trackTitle={track.title} 

@@ -1,19 +1,21 @@
+import { useState } from 'react';
 import './SearchBar.module.css';
 
-const SearchBar = ( {searchBarText, onChangeText, onSubmitForm} ) => {
+const SearchBar = ( {onSubmitForm} ) => {
+  const [text, setText] = useState('');
 
   const handleChange = (e) => {
-    onChangeText(e.target.value);
+    setText(e.target.value);
   };
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    onSubmitForm();
+    onSubmitForm(text);
   };
 
   return (
     <form onSubmit={handleSubmitForm}>
-      <input type="text" id="search" value={searchBarText} onChange={handleChange}></input>
+      <input type="text" id="search" value={text} onChange={handleChange}></input>
       <button type="submit">Search</button>
     </form>
   );

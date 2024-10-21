@@ -1,24 +1,29 @@
+import { useState } from 'react';
 import './Playlist.module.css';
 import Track from '../Track/Track.js';
 
-const Playlist = ( {onChangeTitle, playList, onRemoveTrack} ) => {
+const Playlist = ( {playlist, onRemoveTrack, onSavePlaylist} ) => {
+  const [playlistName, setPlaylistName] = useState('');
 
   const handleChange = (e) => {
-    onChangeTitle(e.target.value);
-  }
+    setPlaylistName(e.target.value);
+  };
 
   const handleClick =(e) => {
-
-  }
+    if (!(playlistName === '')) {
+      const success = onSavePlaylist(playlistName);
+      if (success) {setPlaylistName('')};
+    };
+  };
 
   return (
     <div className="list">
       <h2>Playlist Name:</h2>
-      <input type="text" onChange={handleChange}></input>
+      <input type="text" value={playlistName} onChange={handleChange}></input>
       <br />
       <button onClick={handleClick}>Save Playlist to Spotify</button>
       <div classNme="list-tracks">
-        {playList.map((track) => (
+        {playlist.map((track) => (
             <Track 
               trackUri={track.uri} 
               trackTitle={track.title} 
@@ -31,9 +36,6 @@ const Playlist = ( {onChangeTitle, playList, onRemoveTrack} ) => {
       </div>
     </div>
   )
-}
-
-
-
+};
 
 export default Playlist;

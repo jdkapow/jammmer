@@ -1,73 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import SearchBar from './SearchBar/SearchBar';
 import Tracklist from './Tracklist/Tracklist';
 import Playlist from './Playlist/Playlist';
-
-// Dummy songs
-const sampleTracks = [
-  {
-    title: "Cortez the Killer", artist: "Neil Young", album: "Zuma", uri: 1
-  },
-  {
-    title: "Hey Hey, My My", artist: "Neil Young", album: "Rust Never Sleeps", uri: 2
-  },
-  {
-    title: "Hey", artist: "Low", album: "Hey What", uri: 3
-  },
-  {
-    title: "Hey Jude", artist: "The Beatles", album: "Hey Jude", uri: 4
-  },
-  { 
-    title: "After the Gold Rush", artist: "Neil Young", album: "After the Gold Rush", uri: 5
-  }
-];
+import Spotify from './Spotify/Spotify';
 
 function App() {
-  const [searchBarText, setSearchBarText] = useState('Neil');
   const [searchTerm, setSearchTerm] = useState('');
-  const [trackList, setTrackList] = useState(sampleTracks);
-  const [playList, setPlayList] = useState([]);
-  const [playListTitle, setPlayListTitle] = useState('');
+  const [tracklist, setTracklist] = useState([]);
+  const [playlist, setPlaylist] = useState([]);
+    
+  useEffect(() => doSearch(''),[]);
 
-  const onChangeTextHandler = (newText) => {
-    setSearchBarText(newText);
-  }
+  const doSearch = useCallback((term) => {
+    setSearchTerm(term);
+    Spotify.search(term).then(setTracklist);
+  },[]);
 
-  const onChangeTitleHandler = (newTitle) => {
-    setPlayListTitle(newTitle);
-  }
 
   const onAddTrackHandler = (trackUri) => {
-    const newTrack = trackList.find(obj => obj.uri === trackUri);
-    if (playList.find(obj => obj.uri === trackUri) === undefined) {
-      setPlayList(tracks => [...tracks, newTrack]);
+    const newTrack = tracklist.find(obj => obj.uri === trackUri);
+    if (playlist.find(obj => obj.uri === trackUri) === undefined) {
+      setPlaylist(tracks => [...tracks, newTrack]);
     };
   };
 
   const onRemoveTrackHandler = (trackUri) => {
-    setPlayList(tracks => tracks.filter(track => !(track.uri === trackUri)));
+    setPlaylist(tracks => tracks.filter(track => !(track.uri === trackUri)));
   };
 
-  const doSearch = () => {
-    setSearchTerm(searchBarText);
-    const ucaseSearchTerm = searchBarText.toUpperCase();
-    const filteredTracks = sampleTracks.filter(track =>
-        (track.title.toUpperCase().includes(ucaseSearchTerm) || 
-          track.artist.toUpperCase().includes(ucaseSearchTerm) || 
-          track.album.toUpperCase().includes(ucaseSearchTerm)));
-    setTrackList(filteredTracks);
+  const onSavePlaylistHandler = (playlistName) => {
+    const playlistUris = playlist.map(track => track.uri);
+    Spotify.savePlaylist(playlistName, playlistUris);
+    //clear playlist
+    setPlaylist([]);
+    return true;
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Jim's Giant Jammmer</h1>
-        <SearchBar onSubmitForm={doSearch} onChangeText={onChangeTextHandler} searchBarText={searchBarText}/>
+        <h1>Jim's Giant Jammming</h1>
+        <SearchBar onSubmitForm={doSearch} />
       </header>
       <main>
-        <Tracklist searchTerm={searchTerm} trackList={trackList} onAddTrack={onAddTrackHandler}/>
-        <Playlist onChangeTitle={onChangeTitleHandler} playList={playList} onRemoveTrack={onRemoveTrackHandler}/>
+        <Tracklist searchTerm={searchTerm} tracklist={tracklist} onAddTrack={onAddTrackHandler}/>
+        <Playlist playlist={playlist} onRemoveTrack={onRemoveTrackHandler} onSavePlaylist={onSavePlaylistHandler}/>
       </main>
     </div>
   );
