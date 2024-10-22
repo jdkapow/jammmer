@@ -22,10 +22,10 @@ const Spotify = {
     }
   },
 
-  search(searchTerm) {
+  search(searchTerm, playlist) {
     const searchAccessToken = Spotify.getAccessToken();
     const endPoint = "https://api.spotify.com/v1/search";
-    var queryText = "?q=" + searchTerm + "&type=track&limit=5";
+    var queryText = "?q=" + searchTerm + "&type=track&limit=50"; //change the number of results here
     return fetch(endPoint + queryText, {
       headers: {
         Authorization: `Bearer ${searchAccessToken}`
@@ -41,7 +41,8 @@ const Spotify = {
         artist: track.artists[0].name,
         album: track.album.name,
         id: track.id,
-        uri: track.uri
+        uri: track.uri,
+        inPlaylist: "false"
       }));
     });
   },
@@ -83,5 +84,6 @@ const Spotify = {
       });
   }
 }
+
 
 export default Spotify;

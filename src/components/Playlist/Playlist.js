@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './Playlist.module.css';
+import styles from './Playlist.module.css';
 import Track from '../Track/Track.js';
 
 const Playlist = ( {playlist, onRemoveTrack, onSavePlaylist} ) => {
@@ -17,11 +17,13 @@ const Playlist = ( {playlist, onRemoveTrack, onSavePlaylist} ) => {
   };
 
   return (
-    <div className="list">
-      <h2>Playlist Name:</h2>
-      <input type="text" value={playlistName} onChange={handleChange}></input>
-      <br />
-      <button onClick={handleClick}>Save Playlist to Spotify</button>
+    <div id="playlist-section">
+      <div className="bar">
+        <label for="playlist-name" className={styles.label}>Playlist Name:</label>
+        <input type="text" id="playlist-name" value={playlistName} onChange={handleChange} className={styles.input}></input>
+        <br />
+        <button onClick={handleClick} style={(!playlist.length || playlistName==='') ? {display:"none"} : {}} className={styles.button}>Save Playlist to Spotify</button>
+      </div>
       <div classNme="list-tracks">
         {playlist.map((track) => (
             <Track 
